@@ -19,10 +19,10 @@ import (
 
 type Server struct {
 	app     *fiber.App
-	backend *backend.Backend
+	backend *backend.Dependency
 }
 
-func New(backend *backend.Backend) *Server {
+func New(backend *backend.Dependency) *Server {
 	server := &Server{
 		app: fiber.New(fiber.Config{
 			AppName:       "GIGSNET Backend",

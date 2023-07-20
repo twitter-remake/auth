@@ -6,14 +6,14 @@ import (
 )
 
 // Backend is the main backend struct for the business logic layer
-type Backend struct {
-	repo *repository.Repository
+type Dependency struct {
+	repo *repository.Dependency
 	auth *auth.Client
 }
 
 // New creates a new Backend struct
-func New(repo *repository.Repository, auth *auth.Client) *Backend {
-	return &Backend{
+func New(repo *repository.Dependency, auth *auth.Client) *Dependency {
+	return &Dependency{
 		repo: repo,
 		auth: auth,
 	}

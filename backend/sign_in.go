@@ -15,7 +15,7 @@ type RegisterInput struct {
 	BirthDate  time.Time
 }
 
-func (b *Backend) SignIn(ctx context.Context, input RegisterInput) error {
+func (b *Dependency) SignIn(ctx context.Context, input RegisterInput) error {
 	// TODO: send other params to user service
 	idToken, err := b.auth.VerifyIDToken(ctx, input.IDToken)
 	if err != nil {

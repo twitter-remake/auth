@@ -19,7 +19,7 @@ type RegisterParams struct {
 	Email string
 }
 
-func (r *Repository) SaveIdentity(ctx context.Context, params RegisterParams) error {
+func (r *Dependency) SaveIdentity(ctx context.Context, params RegisterParams) error {
 	query := "INSERT INTO identities (uid, email) VALUES ($1, $2)"
 	if _, err := r.db.Exec(ctx, query, params.UID, params.Email); err != nil {
 		return err
@@ -28,7 +28,7 @@ func (r *Repository) SaveIdentity(ctx context.Context, params RegisterParams) er
 	return nil
 }
 
-func (r *Repository) IdentityExistsByUID(ctx context.Context, uid string) (bool, error) {
+func (r *Dependency) IdentityExistsByUID(ctx context.Context, uid string) (bool, error) {
 	var exists bool
 
 	query := "SELECT EXISTS (SELECT 1 FROM identities WHERE uid = $1)"
