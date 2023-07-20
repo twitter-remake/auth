@@ -34,20 +34,14 @@ func init() {
 func main() {
 	ctx := context.Background()
 
-	// Setup clients
-	firebaseAuth, err := clients.NewFirebaseAuthClient(ctx, "./firebase-credentials.json")
-	if err != nil {
-		log.Fatal().Err(err).Send()
-	}
-
-	postgresClient, err := clients.NewPostgreSQLClient(ctx, config.DatabaseURL())
-	if err != nil {
-		log.Fatal().Err(err).Send()
-	}
-
 	// Initialize layers
-	repository := repository.New(postgresClient)
-	backend := backend.New(repository, firebaseAuth)
+	clients, err := clients.New(ctx)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to initialize clients")
+	}
+
+	repository := repository.New(clients.PostgreSQL)
+	backend := backend.New(repository, clients.Auth)
 	api := api.New(backend)
 
 	// Start server and wait for shutdown signals

@@ -20,10 +20,22 @@ Here you will understand how to run and setup the development environment for th
 
 ***Prerequisites***
 - [Docker](https://docker.com/)
+- [buf](https://buf.build/)
 
-**1. Database**
+**1. Protobuf**
 
-First, Start the containers
+First, you need to generate the protobuf files using [buf](https://buf.build/) protobuf cli tool. You can do this by running the following command:
+
+```bash
+cd proto
+buf generate --debug --verbose
+```
+
+This command will generate the protobuf files in the `gen/{lang=go}/{service}` directory.
+
+**2. Database**
+
+Then, Start the containers
 
 ```bash
 make start
@@ -33,7 +45,7 @@ docker-compose up
 
 Next, There is an `init.sql` file, so next is to execute the queries in the file to create the tables.
 
-**2. Configuration**
+**3. Configuration**
 
 Create the `.env` file by copying the `.env.example` file and fill in the values.
 

@@ -55,10 +55,12 @@ func New(backend *backend.Backend) *Server {
 	server.app.Use(helmet.New())
 	server.app.Use(recover.New())
 	server.app.Use(corsMiddleware)
-	server.app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendStatus(fiber.StatusOK)
-	})
 
+	server.app.Get("/", func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"status": "OK",
+		})
+	})
 	server.app.Post("/sign-in", server.SignIn)
 
 	return server
