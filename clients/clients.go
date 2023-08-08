@@ -2,14 +2,13 @@ package clients
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"strconv"
 
 	"firebase.google.com/go/v4/auth"
-	consulapi "github.com/hashicorp/consul/api"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"github.com/twitter-remake/auth/config"
 	"golang.org/x/sync/errgroup"
 )
@@ -19,7 +18,7 @@ type Clients struct {
 
 	PostgreSQL      *pgxpool.Pool
 	Auth            *auth.Client
-	ServiceRegistry *consulapi.Client
+	ServiceRegistry *Consul
 	UserService     *UserServiceClient
 }
 
@@ -54,14 +53,14 @@ func New(ctx context.Context) (*Clients, error) {
 			return errors.Wrap(err, "initializing consul")
 		}
 
-		if err := c.registerServiceToConsul(); err != nil {
+		if err := c.ServiceRegistry.Register(&RegisterCfg{
+			ID:          config.AppName(),
+			Host:        config.Host(),
+			Port:        config.Port(),
+			Environment: config.Environment(),
+		}); err != nil {
 			return errors.Wrap(err, "initializing consul")
 		}
-		return nil
-	})
-
-	group.Go(func() error {
-		c.UserService = NewUserClient("")
 		return nil
 	})
 
@@ -69,41 +68,23 @@ func New(ctx context.Context) (*Clients, error) {
 		return nil, err
 	}
 
+	services, err := c.ServiceRegistry.Agent().Services()
+	if err != nil {
+		return nil, errors.Wrap(err, "finding user service")
+	}
+
+	userService, ok := services["user-service"]
+	if !ok {
+		return nil, errors.New("user service not found")
+	}
+
+	userHost := net.JoinHostPort(
+		userService.Address,
+		strconv.Itoa(userService.Port))
+
+	log.Debug().Msgf("user service found at %s", userHost)
+
+	c.UserService = NewUserClient(userHost)
+
 	return c, nil
-}
-
-func (c *Clients) registerServiceToConsul() error {
-	var address string
-	if config.Environment() == "dev" {
-		// assuming consul is running in docker
-		address = "host.docker.internal"
-	} else {
-		address = config.Host()
-	}
-
-	check := &consulapi.AgentServiceCheck{
-		HTTP:                           fmt.Sprintf("http://%s/", net.JoinHostPort(address, config.Port())),
-		Interval:                       "10s",
-		Timeout:                        "30s",
-		CheckID:                        fmt.Sprintf("service:%s:http", config.AppName()),
-		DeregisterCriticalServiceAfter: "1m",
-		TLSSkipVerify:                  func() bool { return config.Environment() == "dev" }(),
-	}
-
-	port, _ := strconv.Atoi(config.Port())
-
-	serviceDefinition := &consulapi.AgentServiceRegistration{
-		ID:      config.AppName(),
-		Name:    config.AppName() + "_master",
-		Port:    port,
-		Address: address,
-		Tags:    []string{config.Environment(), "auth-service"},
-		Check:   check,
-	}
-
-	if err := c.ServiceRegistry.Agent().ServiceRegister(serviceDefinition); err != nil {
-		return err
-	}
-
-	return nil
 }

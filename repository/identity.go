@@ -15,13 +15,14 @@ type Identity struct {
 }
 
 type RegisterParams struct {
+	UUID  string
 	UID   string
 	Email string
 }
 
 func (r *Dependency) SaveIdentity(ctx context.Context, params RegisterParams) error {
-	query := "INSERT INTO identities (uid, email) VALUES ($1, $2)"
-	if _, err := r.db.Exec(ctx, query, params.UID, params.Email); err != nil {
+	query := "INSERT INTO identities (id, uid, email) VALUES ($1, $2, $3)"
+	if _, err := r.db.Exec(ctx, query, params.UUID, params.UID, params.Email); err != nil {
 		return err
 	}
 

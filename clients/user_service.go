@@ -12,8 +12,8 @@ type UserServiceClient struct {
 }
 
 func NewUserClient(baseURL string) *UserServiceClient {
-	listingClient := userpb.NewListingProtobufClient(baseURL, &http.Client{})
-	profileClient := userpb.NewProfileProtobufClient(baseURL, &http.Client{})
+	listingClient := userpb.NewListingProtobufClient("http://"+baseURL, &http.Client{})
+	profileClient := userpb.NewProfileProtobufClient("http://"+baseURL, &http.Client{})
 
 	return &UserServiceClient{
 		Listing: listingClient,

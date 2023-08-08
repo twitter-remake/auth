@@ -1,10 +1,10 @@
 import {
-  User,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  User,
 } from 'firebase/auth'
 import { FormEvent, useEffect, useReducer, useState } from 'react'
 import './App.css'
@@ -104,7 +104,7 @@ const SignUpForm = () => {
 
     const token = await credentials?.user?.getIdToken()
 
-    const response = await fetch('http://localhost:8000/sign-in', {
+    const response = await fetch('http://localhost:9000/sign-in', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -174,12 +174,15 @@ function App() {
     // send user data to custom backend api
     const user = {
       uid: credentials?.user?.uid,
+      name: credentials?.user?.displayName,
+      screen_name: credentials?.user?.displayName,
       email: credentials?.user?.email,
+      birth_date: '2003-08-30',
     }
 
     const token = await credentials?.user?.getIdToken()
 
-    const response = await fetch('http://localhost:8000/sign-in', {
+    const response = await fetch('http://localhost:9000/sign-in', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -205,7 +208,7 @@ function App() {
 
     const token = await credentials?.user?.getIdToken()
 
-    const response = await fetch('http://localhost:8000/sign-in', {
+    const response = await fetch('http://localhost:9000/sign-in', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

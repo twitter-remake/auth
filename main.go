@@ -41,7 +41,7 @@ func main() {
 	}
 
 	repository := repository.New(clients.PostgreSQL)
-	backend := backend.New(repository, clients.Auth)
+	backend := backend.New(repository, clients.Auth, clients.UserService)
 	api := api.New(backend)
 
 	// Start server and wait for shutdown signals

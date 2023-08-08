@@ -15,6 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/rs/zerolog/log"
 	"github.com/twitter-remake/auth/backend"
+	"github.com/twitter-remake/auth/config"
 )
 
 type Server struct {
@@ -25,7 +26,7 @@ type Server struct {
 func New(backend *backend.Dependency) *Server {
 	server := &Server{
 		app: fiber.New(fiber.Config{
-			AppName:       "GIGSNET Backend",
+			AppName:       config.AppName(),
 			WriteTimeout:  30 * time.Second,
 			ReadTimeout:   30 * time.Second,
 			ErrorHandler:  Error,
