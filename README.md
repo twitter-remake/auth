@@ -19,8 +19,8 @@ Some other alternatives that I might consider in the future are AWS Cognito and 
 Here you will understand how to run and setup the development environment for the auth service in your local machine.
 
 ***Prerequisites***
-- [Docker](https://docker.com/)
 - [buf](https://buf.build/)
+- [docker-compose setup](https://github.com/twitter-remake/compose)
 
 **1. Protobuf**
 
@@ -33,17 +33,11 @@ buf generate --debug --verbose
 
 This command will generate the protobuf files in the `gen/{lang=go}/{service}` directory.
 
-**2. Database**
-
-Then, Start the containers
-
-```bash
-make start
-# or
-docker-compose up
-```
-
 Next, There is an `init.sql` file, so next is to execute the queries in the file to create the tables.
+
+**2. Local Docker**
+
+Head to [github.com/twitter-remake/compose](https://github.com/twitter-remake/compose) for the docker-compose file and instructions.
 
 **3. Configuration**
 
@@ -51,7 +45,7 @@ Create the `.env` file by copying the `.env.example` file and fill in the values
 
 Next is to create the `firebase-credentials.json` file which you can get from the firebase console `Settings > Service Accounts > Generate new private key`.
 
-**3. Run the service**
+**4. Run the service**
 
 ```bash
 go run main.go
