@@ -51,8 +51,6 @@ Next is to create the `firebase-credentials.json` file which you can get from th
 go run main.go
 ```
 
-I've provided a demo React UI for testing the auth service [here](demo)
-
 ## Support
 
 If you have any questions or feedback, feel free to contact me via [email](mailto:juandotulung@gmail.com)
